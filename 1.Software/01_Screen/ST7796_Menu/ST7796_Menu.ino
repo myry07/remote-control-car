@@ -51,9 +51,9 @@ typedef struct Game1 {
   bool state;
 } Game1;
 
-Menu main_menu = { 70, 95, true };  // 定义全局的 Menu 结构体变量
-Game game_menu = { 70, 95, false };
-Car car_menu = { 70, 95, false };
+Menu main_menu = { 18, 90, true };  // 定义全局的 Menu 结构体变量
+Game game_menu = { 18, 90, false };
+Car car_menu = { 18, 90, false };
 
 Game1 game1 = {0, 0, false};
 
@@ -68,26 +68,26 @@ void drawMenu() {
   tft.setTextFont(4);
   tft.println("Menu");
 
-  tft.pushImage(75, 100, 90, 90, game);
-  tft.pushImage(195, 100, 90, 90, car);
-  tft.pushImage(315, 100, 90, 90, man);
+  tft.pushImage(24, 95, 90, 90, game);
+  tft.pushImage(138, 95, 90, 90, car);
+  tft.pushImage(368, 95, 90, 90, man);
 
   tft.drawRect(main_menu.x, main_menu.y, 100, 100, TFT_GREEN);  // 使用正确的变量名 menu.x
 
-  if (valyl > 3000 && main_menu.x < 310) {  // 使用正确的变量名 menu.x
-    main_menu.x += 120;
+  if (valyl > 3000 && main_menu.x < 466) {  // 使用正确的变量名 menu.x
+    main_menu.x += 116;
     delay(200);
   }
 
-  if (valyl < 200 && main_menu.x > 70) {  // 使用正确的变量名 menu.x
-    main_menu.x -= 120;
+  if (valyl < 200 && main_menu.x > 18) {  // 使用正确的变量名 menu.x
+    main_menu.x -= 116;
     delay(200);
   }
 
   tft.setCursor(170, 250);
   tft.setTextFont(4);
 
-  if (main_menu.x == 70) {
+  if (main_menu.x == 18) {
     tft.setTextColor(TFT_BLUE);
     tft.print("1. Play Games");
 
@@ -100,7 +100,7 @@ void drawMenu() {
     }
   }
 
-  if (main_menu.x == 190) {
+  if (main_menu.x == 134) {
     tft.setTextColor(TFT_RED);
     tft.print("2. Ctrl Car");
 
@@ -113,18 +113,24 @@ void drawMenu() {
     }
   }
 
-  if (main_menu.x == 310) {
+  if(main_menu.x == 250) {
+    tft.setTextColor(TFT_RED);
+    tft.print("3. Ctrl Balance");
+  }
+
+  if (main_menu.x == 366) {
     tft.setTextColor(TFT_WHITE);
-    tft.print("3. Get Author");
+    tft.print("4. Get Author");
   }
 }
 
 void updateMenu(int valy, int x) {
-  if (x >= 70 && x <= 310) {
+  if (x >= 18 && x <= 366) {
     if (valy < 200 || valy > 3000) {
-      tft.drawRect(70, 95, 100, 100, TFT_BLACK);
-      tft.drawRect(190, 95, 100, 100, TFT_BLACK);
-      tft.drawRect(310, 95, 100, 100, TFT_BLACK);
+      tft.drawRect(18, 90, 100, 100, TFT_BLACK);
+      tft.drawRect(134, 90, 100, 100, TFT_BLACK);
+      tft.drawRect(250, 90, 100, 100, TFT_BLACK);
+      tft.drawRect(366, 90, 100, 100, TFT_BLACK);
       tft.fillRect(170, 250, 200, 100, TFT_BLACK);
     }
   }
@@ -141,24 +147,24 @@ void drawGameMenu() {
   tft.setTextFont(4);
   tft.println("Game Menu");
 
-  tft.pushImage(5, 5, 90, 90, game);  // 使用正确的变量名 game.x
-  tft.pushImage(75, 100, 90, 90, ttkp);
-  tft.pushImage(195, 100, 90, 90, plane);
+  tft.pushImage(0, 0, 90, 90, game);  // 使用正确的变量名 game.x
+  tft.pushImage(23, 95, 90, 90, ttkp);
+  tft.pushImage(138, 95, 90, 90, plane);
 
   tft.drawRect(game_menu.x, game_menu.y, 100, 100, TFT_BLUE);
 
-  if (valyl > 3000 && game_menu.x < 190) { 
-    game_menu.x += 120;
+  if (valyl > 3000 && game_menu.x < 134) { 
+    game_menu.x += 116;
     delay(200);
   }
 
-  if (valyl < 200 && game_menu.x > 70) { 
-    game_menu.x -= 120;
+  if (valyl < 200 && game_menu.x > 18) { 
+    game_menu.x -= 116;
     delay(200);
   }
 
   tft.setCursor(170, 250);
-  if (game_menu.x == 70) {
+  if (game_menu.x == 18) {
     tft.print("1. Parkour");
 
     if (valxr > 3000) {
@@ -169,7 +175,7 @@ void drawGameMenu() {
     }
   }
 
-  if (game_menu.x == 190) {
+  if (game_menu.x == 134) {
     tft.print("2. Plane");
   }
 
@@ -210,7 +216,7 @@ void drawCarMenu() {
   tft.setTextFont(4);
   tft.println("Car Menu");
 
-  tft.pushImage(5, 5, 90, 90, car);  // 使用正确的变量名 game.x
+  tft.pushImage(0, 0, 90, 90, car);  // 使用正确的变量名 game.x
 
   //退出小车菜单
   if (valxr < 200) {

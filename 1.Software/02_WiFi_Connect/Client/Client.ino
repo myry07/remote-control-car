@@ -9,11 +9,6 @@ const char* serverNum = "http://192.168.4.1/num";
 
 String num;
 
-// Set the time interval between each request.
-// By default, it’s set to 5 seconds, but you can change it to any other interval.
-unsigned long previousMillis = 0;
-const long interval = 5000;
-
 String httpGETRequest(const char* serverName) {
   HTTPClient http;
 

@@ -35,7 +35,6 @@ void setup() {
   Serial.begin(115200);
   delay(1000);
   
-  tft.begin();
   tft.init();
   tft.setRotation(3);
   tft.setTextColor(0xFFFF, 0x0000);

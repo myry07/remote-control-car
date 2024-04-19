@@ -2,6 +2,7 @@
 #include <SPI.h>
 #include "main_menu.h"
 #include "game_menu.h"
+#include "car_menu.h"
 #include "game1_img.h"
 
 #define SCREEN_WIDTH 480
@@ -70,6 +71,7 @@ void drawMenu() {
 
   tft.pushImage(24, 95, 90, 90, game);
   tft.pushImage(138, 95, 90, 90, car);
+  tft.pushImage(253, 95, 90, 90, balance);
   tft.pushImage(368, 95, 90, 90, man);
 
   tft.drawRect(main_menu.x, main_menu.y, 100, 100, TFT_GREEN);  // 使用正确的变量名 menu.x
@@ -114,7 +116,7 @@ void drawMenu() {
   }
 
   if(main_menu.x == 250) {
-    tft.setTextColor(TFT_RED);
+    tft.setTextColor(TFT_PURPLE);
     tft.print("3. Ctrl Balance");
   }
 
@@ -147,7 +149,7 @@ void drawGameMenu() {
   tft.setTextFont(4);
   tft.println("Game Menu");
 
-  tft.pushImage(0, 0, 90, 90, game);  // 使用正确的变量名 game.x
+  tft.pushImage(0, 0, 90, 90, game); 
   tft.pushImage(23, 95, 90, 90, ttkp);
   tft.pushImage(138, 95, 90, 90, plane);
 
@@ -188,41 +190,57 @@ void drawGameMenu() {
   }
 }
 
-void drawGame1() {
-  valxl = analogRead(pinXl);  // 读取x轴的值并转换为变量
-  valyl = analogRead(pinYl);  // 读取y轴的值并转换为变量
-  valxr = analogRead(pinXr);
-  valyr = analogRead(pinYr);
-
-  tft.pushImage(0, 0, 48, 32, bg);
-
-  if (valxr < 200) {
-    tft.fillScreen(TFT_BLACK);
-    game1.state = false;
-    game_menu.state = true;
-    delay(200);
-  }
-}
-
-
 void drawCarMenu() {
   valxl = analogRead(pinXl);  // 读取x轴的值并转换为变量
   valyl = analogRead(pinYl);  // 读取y轴的值并转换为变量
   valxr = analogRead(pinXr);
   valyr = analogRead(pinYr);
 
-  tft.setCursor(200, 30);
-  tft.setTextColor(TFT_RED);
-  tft.setTextFont(4);
-  tft.println("Car Menu");
-
   tft.pushImage(0, 0, 90, 90, car);  // 使用正确的变量名 game.x
+  tft.pushImage(23, 95, 90, 90, wheel);
+  tft.pushImage(138, 95, 90, 90, dragon);
 
-  //退出小车菜单
+  tft.drawRect(car_menu.x, car_menu.y, 100, 100, TFT_RED);
+
+  if (valyl > 3000 && car_menu.x < 134) { 
+    car_menu.x += 116;
+    delay(200);
+  }
+
+  if (valyl < 200 && car_menu.x > 18) { 
+    car_menu.x -= 116;
+    delay(200);
+  }
+
+  tft.setCursor(170, 250);
+  if (car_menu.x == 18) {
+    tft.print("1. Drive Car");
+  }
+
+  if (car_menu.x == 134) {
+    tft.print("2. Play Game");
+  }
+
+  //退出游戏菜单
   if (valxr < 200) {
     tft.fillScreen(TFT_BLACK);
     car_menu.state = false;
     main_menu.state = true;
+    delay(200);
+  }
+}
+
+void drawGame1() {
+  valxl = analogRead(pinXl);  // 读取x轴的值并转换为变量
+  valyl = analogRead(pinYl);  // 读取y轴的值并转换为变量
+  valxr = analogRead(pinXr);
+  valyr = analogRead(pinYr);
+
+  if (valxr < 200) {
+    tft.fillScreen(TFT_BLACK);
+    game1.state = false;
+    game_menu.state = true;
+    delay(200);
   }
 }
 
@@ -253,6 +271,7 @@ void loop() {
 
   if (car_menu.state) {
     drawCarMenu();
+    updateMenu(valyl, car_menu.x);
   }
 
   if(game1.state) {

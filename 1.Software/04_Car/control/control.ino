@@ -5,17 +5,21 @@
 #define SCREEN_WIDTH 160
 #define SCREEN_HEIGHT 128
 
-#define TX_Port 1
-#define RX_Port 3
+#define leftfont 34
+#define leftback 35
+#define rightfont 32
+#define rightback 33
 
 TFT_eSPI tft = TFT_eSPI();
 
-void setup() {
-  pinMode(TX_Port, OUTPUT);
-  digitalWrite(TX_Port, 1);
 
-  pinMode(RX_Port, OUTPUT);
-  digitalWrite(RX_Port, 1);
+void setup() {
+  Serial.begin(115200);
+
+  pinMode(leftfont, OUTPUT);
+  pinMode(leftback, OUTPUT);
+  pinMode(rightfont, OUTPUT);
+  pinMode(rightback, OUTPUT);
 
   tft.init();
   tft.setRotation(3);
@@ -26,10 +30,10 @@ void setup() {
 
   tft.print("connecting ");
 
-  for(int i = 0; i < 7; i++) {
+  for (int i = 0; i < 7; i++) {
     delay(1000);
     tft.print(".");
-  } 
+  }
 
   tft.setTextFont(2);
 
@@ -49,16 +53,45 @@ void loop() {
 
   tft.pushImage(60, 45, 70, 50, car1);
 
-  //up
   tft.fillCircle(92, 30, 3, TFT_PURPLE);
 
-  //right
-  tft.fillCircle(144, 64, 3, TFT_PURPLE);
+  digitalWrite(leftfont, 1);
+  digitalWrite(rightfont, 1);
+  digitalWrite(leftback, 0);
+  digitalWrite(rightback, 0);
 
-  //down
-  tft.fillCircle(92, 105, 3, TFT_PURPLE);
+  if (Serial.available() > 0) {         // 检查是否有可用的串口数据
+    char incomingByte = Serial.read();  // 从串口读取一个字节的数据
+    Serial.print("Received: ");
+    Serial.println(incomingByte);
+
+    if (incomingByte == 'w') {
+      Serial.println("向前");
+      //up
+      tft.fillCircle(92, 30, 3, TFT_PURPLE);
+
+      digitalWrite(leftfont, 1);
+      digitalWrite(rightfont, 1);
+      digitalWrite(leftback, 0);
+      digitalWrite(rightback, 0);
+    }
+
+    if (incomingByte == 's') {
+      Serial.println("向后");
+      //down
+      tft.fillCircle(92, 105, 3, TFT_PURPLE);
+
+      digitalWrite(leftfont, 0);
+      digitalWrite(rightfont, 0);
+      digitalWrite(leftback, 1);
+      digitalWrite(rightback, 1);
+    }
+  }
+
+  //right
+  // tft.fillCircle(144, 64, 3, TFT_PURPLE);
+
 
   //left
-  tft.fillCircle(44, 64, 3, TFT_PURPLE);
-};
-
+  // tft.fillCircle(44, 64, 3, TFT_PURPLE);
+}

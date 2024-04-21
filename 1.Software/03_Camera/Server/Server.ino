@@ -12,23 +12,12 @@ using namespace websockets;
 WebsocketsServer server;
 WebsocketsClient client;
 
-#define pinXl 32  // 遥感x轴
-#define pinYl 33  // 遥感y轴
-#define pinXr 34
-#define pinYr 35
+TFT_eSPI tft = TFT_eSPI();         // Invoke custom library
 
-TFT_eSPI tft = TFT_eSPI();  // Invoke custom library
-
-int valxl = 0;
-int valyl = 0;
-int valxr = 0;
-int valyr = 0;
-
-bool cameraState = false;
-
-bool tft_output(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* bitmap) {
-  // Stop further decoding as image is running off bottom of screen
-  if (y >= tft.height()) return 0;
+bool tft_output(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* bitmap)
+{
+   // Stop further decoding as image is running off bottom of screen
+  if ( y >= tft.height() ) return 0;
 
   // This function will clip the image block rendering automatically at the TFT boundaries
   tft.pushImage(x, y, w, h, bitmap);
@@ -40,58 +29,24 @@ bool tft_output(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* bitmap) 
   return 1;
 }
 
-void getCamera() {
-  if (server.poll()) {
-    client = server.accept();
-  }
-
-  if (client.available()) {
-    client.poll();
-
-    WebsocketsMessage msg = client.readBlocking();
-
-    uint32_t t = millis();
-
-    // Get the width and height in pixels of the jpeg if you wish
-    uint16_t w = 0, h = 0;
-    TJpgDec.getJpgSize(&w, &h, (const uint8_t*)msg.c_str(), msg.length());
-    Serial.print("Width = ");
-    Serial.print(w);
-    Serial.print(", height = ");
-    Serial.println(h);
-
-    // Calculate offsets to center the image
-    int16_t xOffset = (480 - w) / 2;
-    int16_t yOffset = (320 - h) / 2;
-
-    // Draw the image centered on the screen
-    TJpgDec.drawJpg(xOffset, yOffset, (const uint8_t*)msg.c_str(), msg.length());
-
-    // How much time did rendering take (ESP8266 80MHz 271ms, 160MHz 157ms, ESP32 SPI 120ms, 8bit parallel 105ms
-    t = millis() - t;
-    Serial.print(t);
-    Serial.println(" ms");
-  }
-}
-
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
   delay(1000);
-
+  
   tft.init();
   tft.setRotation(3);
   tft.setTextColor(0xFFFF, 0x0000);
   tft.fillScreen(TFT_BLACK);
-  tft.setSwapBytes(true);  // We need to swap the colour bytes (endianess)
+  tft.setSwapBytes(true); // We need to swap the colour bytes (endianess)
 
   // The jpeg image can be scaled by a factor of 1, 2, 4, or 8
   TJpgDec.setJpgScale(1);
 
   // The decoder must be given the exact name of the rendering function above
   TJpgDec.setCallback(tft_output);
-
+  
   Serial.println();
   Serial.println("Setting AP...");
   WiFi.softAP(ssid, password);
@@ -104,23 +59,31 @@ void setup() {
 }
 
 void loop() {
-  valxl = analogRead(pinXl);  // 读取x轴的值并转换为变量
-  valyl = analogRead(pinYl);  // 读取y轴的值并转换为变量
-  valxr = analogRead(pinXr);
-  valyr = analogRead(pinYr);
-
-  if (valxr > 3000) {
-    cameraState = true;
-    delay(200);
+  if(server.poll()) {
+    client = server.accept();
   }
 
-  if (valxr < 200) {
-    cameraState = false;
-    tft.fillScreen(TFT_BLACK);
-    delay(200);
-  }
+  if(client.available()) {
+    client.poll();
 
-  if (cameraState) {
-    getCamera();
+    WebsocketsMessage msg = client.readBlocking();
+
+    uint32_t t = millis();
+
+    // Get the width and height in pixels of the jpeg if you wish
+    uint16_t w = 0, h = 0;
+    TJpgDec.getJpgSize(&w, &h, (const uint8_t*)msg.c_str(), msg.length());
+    Serial.print("Width = "); Serial.print(w); Serial.print(", height = "); Serial.println(h);
+  
+    // Calculate offsets to center the image
+    int16_t xOffset = (480 - w) / 2;
+    int16_t yOffset = (320 - h) / 2;
+  
+    // Draw the image centered on the screen
+    TJpgDec.drawJpg(xOffset, yOffset, (const uint8_t*)msg.c_str(), msg.length());
+  
+    // How much time did rendering take (ESP8266 80MHz 271ms, 160MHz 157ms, ESP32 SPI 120ms, 8bit parallel 105ms
+    t = millis() - t;
+    Serial.print(t); Serial.println(" ms");
   }
 }

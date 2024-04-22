@@ -22,8 +22,7 @@ typedef struct Car {
 
 Car c = { 1800, 1800, 0 };
 
-unsigned long previousMillis = 0;
-const long interval = 10;
+int temp = 0;
 
 // 回调函数
 void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len) {
@@ -102,10 +101,6 @@ void setup() {
   pinMode(leftback, OUTPUT);
   pinMode(rightfont, OUTPUT);
   pinMode(rightback, OUTPUT);
-  digitalWrite(leftfont, 0);
-  digitalWrite(rightfont, 0);
-  digitalWrite(leftback, 0);
-  digitalWrite(rightback, 0);
 
   tft.init();
   tft.setRotation(3);
@@ -113,11 +108,10 @@ void setup() {
 
   tft.pushImage(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, fox);
   tft.setCursor(0, 112);
-  Serial.println("Connecting");
 
-  tft.print("connecting ");
+  tft.print("starting ");
 
-  for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < 7; i++) {
     delay(1000);
     tft.print(".");
   }
@@ -129,7 +123,7 @@ void setup() {
 
   // 注册接收回调函数
   if (esp_now_register_recv_cb(OnDataRecv) != ESP_OK) {
-    tft.println("Error registering recv callback");
+    tft.println("Error");
     return;
   }
 
@@ -138,7 +132,7 @@ void setup() {
   delay(1000);
   tft.setCursor(5, 34);
   tft.fillScreen(TFT_BLACK);
-  tft.println("connected!");
+  tft.println("started!");
   tft.setCursor(5, 54);
   tft.print("MAC: ");
   tft.print(WiFi.macAddress());
@@ -147,6 +141,28 @@ void setup() {
 }
 
 void loop() {
+  if (c.state == 1) {
+
+    if (temp == 0) {
+      tft.pushImage(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, fox);
+      tft.setCursor(0, 112);
+
+      tft.print("controller conneting ");
+
+      for (int i = 0; i < 7; i++) {
+        delay(1000);
+        tft.print(".");
+      }
+      tft.fillScreen(TFT_BLACK);
+    }
+
+    temp = -1;
+    digitalWrite(2, 1);
+  } else {
+    temp = 0;
+    digitalWrite(2, 0);
+  }
+
   tft.setCursor(0, 0);
   tft.print("x: ");
   tft.println(c.x);
@@ -154,12 +170,6 @@ void loop() {
   tft.println(c.y);
 
   tft.pushImage(60, 45, 70, 50, car1);
-
-  if (c.state == 1) {
-    digitalWrite(2, 1);
-  } else {
-    digitalWrite(2, 0);
-  }
 
   control();
 }

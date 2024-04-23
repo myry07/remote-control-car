@@ -5,4 +5,4 @@ Hallo das ist ein Wagen-Projeckt, welches mit Arduino programmiert wird. Ich nen
 
 ![image](https://github.com/myry07/AMW/blob/main/3.Dos/p1.jpg)
 
-<img src="https://github.com/myry07/AMW/blob/main/3.Dos/p1.jpg" width="100px">
+<img src="https://github.com/myry07/AMW/blob/main/3.Dos/p1.jpg" width="700px">

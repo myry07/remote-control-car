@@ -109,9 +109,9 @@ void setup() {
   tft.pushImage(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, fox);
   tft.setCursor(0, 112);
 
-  tft.print("starting ");
+  tft.print("initializing ");
 
-  for (int i = 0; i < 7; i++) {
+  for (int i = 0; i < 3; i++) {
     delay(1000);
     tft.print(".");
   }
@@ -132,7 +132,7 @@ void setup() {
   delay(1000);
   tft.setCursor(5, 34);
   tft.fillScreen(TFT_BLACK);
-  tft.println("started!");
+  tft.println("initialized!");
   tft.setCursor(5, 54);
   tft.print("MAC: ");
   tft.print(WiFi.macAddress());
@@ -149,7 +149,7 @@ void loop() {
 
       tft.print("controller conneting ");
 
-      for (int i = 0; i < 7; i++) {
+      for (int i = 0; i < 3; i++) {
         delay(1000);
         tft.print(".");
       }

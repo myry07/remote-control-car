@@ -428,32 +428,24 @@ void drawDriveCar() {
 
   uint16_t touchX = 0, touchY = 0;
   bool pressed = tft.getTouch(&touchX, &touchY);
-  // if (pressed) {
+  if (pressed) {
+    
+    if(touchX >= 100 && touchX <= 380 && touchY >= 0 && touchY <= 150) {
+      valxl = 3500;
+    } 
 
-  //   if(touchX >= 0 && touchX <= 480 && touchY >= 0 && touchY <= 150) {
-  //     valxl = 3500;
-  //   } else {
-  //     valxl = analogRead(pinXl);
-  //   }
+    if(touchX >= 100 && touchX <= 380 && touchY >= 200 && touchY <= 320) {
+      valxl = 100;
+    } 
 
-  //   if(touchX >= 0 && touchX <= 480 && touchY >= 200 && touchY <= 320) {
-  //     valxl = 100;
-  //   } else {
-  //     valxl = analogRead(pinXl);
-  //   }
+    if(touchX >= 0 && touchX <= 120 && touchY >= 100 && touchY <= 220) {
+      valyl = 100;
+    }
 
-  //   if(touchX >= 0 && touchX <= 120 && touchY >= 0 && touchY <= 320) {
-  //     valyl = 3500;
-  //   } else {
-  //     valyl = analogRead(pinYl);
-  //   }
-
-  //   if(touchX >= 400 && touchX <= 480 && touchY >= 0 && touchY <= 120) {
-  //     valyl = 100;
-  //   } else {
-  //     valyl = analogRead(pinYl);
-  //   }
-  // }
+    if(touchX >= 400 && touchX <= 480 && touchY >= 100 && touchY <= 220) {
+      valyl = 3500;
+    }
+  }
 
   sent.x = valxl;
   sent.y = valyl;
